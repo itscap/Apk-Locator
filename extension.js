@@ -1,27 +1,30 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+'use strict';
 const vscode = require('vscode');
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+const Utils = require('./src/utils');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "apk-locator" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', function () {
-		// The code you place here will be executed every time your command is executed
+	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder',async function () {
+		
+		/*
+		let folderName = vscode.workspace.name; // get the open folder name
+		let folderPath = vscode.workspace.rootPath;
+		*/
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('TODO');
+		let folderPath = vscode.workspace.rootPath;
+		let res = await Utils.sh('open file://'+folderPath)
+		if(res){
+			vscode.window.showInformationMessage('OK!');
+		}else{
+			vscode.window.showInformationMessage('NOT OK!');
+		}
+		
+	
 	});
 
 	context.subscriptions.push(disposable);
@@ -35,3 +38,16 @@ module.exports = {
 	activate,
 	deactivate
 }
+
+
+async function sh(cmd) {
+    return new Promise(function (resolve, reject) {
+      exec(cmd, (err, stdout, stderr) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ stdout, stderr });
+        }
+      });
+    });
+  }

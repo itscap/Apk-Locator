@@ -15,20 +15,25 @@
 	],
 	"main": "./extension.js",
 	"contributes": {
-		"commands": [{
-            "command": "extension.open_apk_release_folder",
-			"title": "Open apk release folder"
-		}]
+		"commands": [
+			{
+				"command": "extension.open_apk_release_folder",
+				"title": "Open apk release folder"
+			}
+		]
 	},
 	"scripts": {
+		"build": "babel src -d lib",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
+		"@babel/cli": "^7.4.4",
+		"@babel/core": "^7.4.4",
+		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"eslint": "^5.13.0",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
 	}
 }
