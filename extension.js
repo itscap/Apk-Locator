@@ -11,20 +11,18 @@ function activate(context) {
 
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder',async function () {
 		
-		/*
-		let folderName = vscode.workspace.name; // get the open folder name
-		let folderPath = vscode.workspace.rootPath;
-		*/
+	
+		const rootDir = Utils.getRoot();
+		const androidPrjDir = rootDir+"/android";
+		if(Utils.hasAndroidProject(androidPrjDir)){
 
-		let folderPath = vscode.workspace.rootPath;
-		let res = await Utils.sh('open file://'+folderPath)
-		if(res){
-			vscode.window.showInformationMessage('OK!');
+			const apkDir = androidPrjDir+"⁨/app⁩/build⁩/outputs⁩/apk⁩/release⁩"
+			await Utils.sh('open file://'+apkDir)
+			vscode.window.showInformationMessage('Dir opened!');	
 		}else{
-			vscode.window.showInformationMessage('NOT OK!');
+			vscode.window.showErrorMessage('Cannot find android project ');
 		}
 		
-	
 	});
 
 	context.subscriptions.push(disposable);
