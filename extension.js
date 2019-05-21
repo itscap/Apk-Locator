@@ -12,6 +12,7 @@ function activate(context) {
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder',async function () {
 		
 	
+		Utils.findAndroidRoot();
 		const rootDir = Utils.getRoot();
 		const androidPrjDir = rootDir+"/android";
 		if(Utils.hasAndroidProject(androidPrjDir)){
