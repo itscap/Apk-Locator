@@ -27,7 +27,7 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	let fileList = fs.readdirSync(dirToSearch);
 	await fileList.forEach(async file => {
 		file = dirToSearch + "/" + file;//TODO: will this work on windows?
-		let stat = fs.statSync(file); dirToSearch
+		let stat = fs.statSync(file);
 		if (!_isFileInADirToExclude(file)) {
 			if (stat && stat.isDirectory()) {
 				/* Recurse into a subdirectory */
@@ -37,7 +37,7 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 			} else {
 				/* Is file */
 				if (path.basename(file) === MANIFEST_FILE_NAME) {
-					console.log("Manifest file found! ==> ", file);
+					//console.log("Manifest file found! ==> ", file);
 					if (validateFile && _isValidManifestFile(file)) {//TODO: Fix if !validate file
 						manifestsArr.push(file);
 					} else {
@@ -50,32 +50,56 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	return manifestsArr;
 };
 
-var extractApkDirs = async (manifestsFiles) => {
-	/** 
-	 * Every android project has the following structure: [ .../app/build⁩/outputs⁩/apk ]
-	*/
+/** 
+ * Every android project has the following structure: [ .../app/build⁩/outputs⁩/apk ]
+ * Output dir should always be found,
+ * but Apk's folders are generated after user makes a build.
+ */
+var getProjectOutputDirPath = async (manifestsFiles) => {
+
+	const APP_DIR = "app"
+	const BUILD_DIR = "build"
+	const OUTPUTS_DIR = "outputs"
 	
-	const ANDROID_APP_BASE_FOLDER = "app"
-	let buildDirs = []
-	let projectOutputDir = null
+	let projectOutputDirPath = null
+
 	let i = 0
-	while (!projectOutputDir && i < manifestsFiles.length) {
-		let pathSplit = path.dirname(manifestsFiles[i]).split(ANDROID_APP_BASE_FOLDER)
+	while (!projectOutputDirPath && i < manifestsFiles.length) {
+		//Only the right one contains /app
+		let pathSplit = path.dirname(manifestsFiles[i]).split(APP_DIR)
 		if (pathSplit && pathSplit.length > 1) {
 			let projectAppBaseFolderPath = pathSplit[0]
-			let projectOutputDirPath = path.join(projectAppBaseFolderPath, ANDROID_APP_BASE_FOLDER, "build", "outputs")
-			projectOutputDir = fs.readdirSync(projectOutputDirPath)
+			projectOutputDirPath = path.join(projectAppBaseFolderPath, APP_DIR, BUILD_DIR, OUTPUTS_DIR)
 		}
 		++i
 	}
-	//Output dir should always be found, apk is only generated when user make a build
-	if (projectOutputDir) {
-		//TODO: GET SUB DIR AND RETURN	
-		console.log("projectOutputDir => ", JSON.stringify(projectOutputDir))
-	}
-
-	return buildDirs
+	return projectOutputDirPath
 }
+
+var getApkDirPath = async (outputDirPath) => {
+	const APK_DIR = "apk"
+	let apkDir = null
+	if (outputDirPath) {
+		let apkDirExists = fs.readdirSync(outputDirPath).find(dir => dir == APK_DIR)
+		if(apkDirExists){
+			apkDir = path.join(outputDirPath, APK_DIR)
+		}
+	}
+	return apkDir
+}
+
+var getSubDirPaths = async (dirPath) => {
+
+	let subDirPaths = []
+	if (dirPath) {
+		await fs.readdirSync(dirPath).forEach(subDir =>{
+			subDirPaths.push(path.join(dirPath, subDir))
+		})
+	}
+	return subDirPaths
+}
+
+
 
 //Dir to skip for sure
 function _isFileInADirToExclude(file) {
@@ -138,4 +162,4 @@ function sh(cmd) {
 	});
 }
 
-module.exports = { getRoot, sh, findManifests, extractApkDirs, pickADirDialog };
+module.exports = { getRoot, sh, findManifests, getProjectOutputDirPath, getApkDirPath, getSubDirPaths, pickADirDialog };

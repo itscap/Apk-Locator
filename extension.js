@@ -9,25 +9,38 @@ function activate(context) {
 
 	console.log('Congratulations, your extension "apk-locator" is now active!');
 
-	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder',async function () {
-		
-		const rootDir = Utils.getRoot();
-		let manifestsInProj = await Utils.findManifests([],rootDir,true)
-		if(manifestsInProj){
+	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
 
-			let buildDirs = await Utils.extractApkDirs(manifestsInProj)
-			if(buildDirs){
-				console.log("buildDirs => ", JSON.stringify(buildDirs))
+		const rootDir = Utils.getRoot();
+		let manifestsInProj = await Utils.findManifests([], rootDir, true)
+		if (manifestsInProj && manifestsInProj.length>0) {
+
+			let outputDir = await Utils.getProjectOutputDirPath(manifestsInProj)
+			if (outputDir) {
+				
+				let apkDir = await Utils.getApkDirPath(outputDir)
+				if (apkDir) {
+					console.log("apkDir => ", JSON.stringify(apkDir))
+					let projFlavours = await Utils.getSubDirPaths(apkDir)
+					console.log("projFlavours => ", JSON.stringify(projFlavours))
+					//TODO: SHOW PICKER DIALOG WITH FOUND DIRS(which names corresponds to selected project flavour) 
+					/*
+						await Utils.sh('open file://'+apkDir)
+						vscode.window.showInformationMessage('Dir opened!');	
+					*/
+				}else{
+					//TODO: Open outputDir fallback?
+					vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
+				}
+
+			} else {
+				vscode.window.showErrorMessage('Cannot find prj output dir, KO');
 			}
-			/*
-			const apkDir = androidPrjDir+"⁨/app⁩/build⁩/outputs⁩/apk⁩/release⁩"
-			await Utils.sh('open file://'+apkDir)
-			vscode.window.showInformationMessage('Dir opened!');	
-			*/
-		}else{
-			vscode.window.showErrorMessage('Cannot find manifests project ');
+
+		} else {
+			vscode.window.showErrorMessage('Cannot find manifests project, are you sure this is an android proj?');
 		}
-		
+
 	});
 
 	context.subscriptions.push(disposable);
@@ -35,7 +48,7 @@ function activate(context) {
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,
@@ -44,13 +57,13 @@ module.exports = {
 
 
 async function sh(cmd) {
-    return new Promise(function (resolve, reject) {
-      exec(cmd, (err, stdout, stderr) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ stdout, stderr });
-        }
-      });
-    });
-  }
+	return new Promise(function (resolve, reject) {
+		exec(cmd, (err, stdout, stderr) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve({ stdout, stderr });
+			}
+		});
+	});
+}
