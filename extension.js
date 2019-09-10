@@ -23,7 +23,8 @@ function activate(context) {
 					console.log("apkDir => ", JSON.stringify(apkDir))
 					let projFlavours = await Utils.getSubDirPaths(apkDir)
 					console.log("projFlavours => ", JSON.stringify(projFlavours))
-					//TODO: SHOW PICKER DIALOG WITH FOUND DIRS(which names corresponds to selected project flavour) 
+					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
+					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
 					/*
 						await Utils.sh('open file://'+apkDir)
 						vscode.window.showInformationMessage('Dir opened!');	

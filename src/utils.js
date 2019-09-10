@@ -13,15 +13,6 @@ function getRoot() {
 	return rootPath;
 }
 
-var pickADirDialog = async (buildDirs) => {
-
-	const selection = await vscode.window.showQuickPick(["1", "2"], {
-		label: "Pick a flavour:",
-		canPickMany: false
-	});
-	console.log(selection);//TODO: HERE
-}
-
 var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	const MANIFEST_FILE_NAME = "AndroidManifest.xml";
 	let fileList = fs.readdirSync(dirToSearch);
@@ -60,7 +51,7 @@ var getProjectOutputDirPath = async (manifestsFiles) => {
 	const APP_DIR = "app"
 	const BUILD_DIR = "build"
 	const OUTPUTS_DIR = "outputs"
-	
+
 	let projectOutputDirPath = null
 
 	let i = 0
@@ -81,7 +72,7 @@ var getApkDirPath = async (outputDirPath) => {
 	let apkDir = null
 	if (outputDirPath) {
 		let apkDirExists = fs.readdirSync(outputDirPath).find(dir => dir == APK_DIR)
-		if(apkDirExists){
+		if (apkDirExists) {
 			apkDir = path.join(outputDirPath, APK_DIR)
 		}
 	}
@@ -92,7 +83,7 @@ var getSubDirPaths = async (dirPath) => {
 
 	let subDirPaths = []
 	if (dirPath) {
-		await fs.readdirSync(dirPath).forEach(subDir =>{
+		await fs.readdirSync(dirPath).forEach(subDir => {
 			subDirPaths.push(path.join(dirPath, subDir))
 		})
 	}
@@ -150,6 +141,24 @@ function getDirFiles(dir) {
 	return files;
 }
 
+var pickAFlavourDialog = async (buildDirs) => {
+
+	let selectedIndex = 0
+	const PATH_SPLIT_CHAR = "/"//TODO if windows get "\"
+	let projFlavours = buildDirs.map(dir => {
+		let lastPathSegment = dir.split(PATH_SPLIT_CHAR).slice(-1)[0]
+		return lastPathSegment
+	})
+	if (projFlavours) {
+		const selection = await vscode.window.showQuickPick(projFlavours, {
+			label: "Pick a flavour:",
+			canPickMany: false
+		});
+		selectedIndex = projFlavours.findIndex(f => f == selection)
+	}
+	return buildDirs[selectedIndex]
+}
+
 function sh(cmd) {
 	return new Promise(function (resolve, reject) {
 		proc.exec(cmd, (err, stdout, stderr) => {
@@ -162,4 +171,4 @@ function sh(cmd) {
 	});
 }
 
-module.exports = { getRoot, sh, findManifests, getProjectOutputDirPath, getApkDirPath, getSubDirPaths, pickADirDialog };
+module.exports = { getRoot, sh, findManifests, getProjectOutputDirPath, getApkDirPath, getSubDirPaths, pickAFlavourDialog };
