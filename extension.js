@@ -23,11 +23,14 @@ function activate(context) {
 					console.log("apkDir => ", JSON.stringify(apkDir))
 					let projFlavours = await Utils.getSubDirPaths(apkDir)
 					console.log("projFlavours => ", JSON.stringify(projFlavours))
+					//TODO: Filter folders if containing existing apk
 					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
 					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
+					
+					
 					/*
-						await Utils.sh('open file://'+apkDir)
-						vscode.window.showInformationMessage('Dir opened!');	
+					await Utils.sh('open file://'+apkDir)
+					vscode.window.showInformationMessage('Dir opened!');	
 					*/
 				}else{
 					//TODO: Open outputDir fallback?
@@ -54,17 +57,4 @@ function deactivate() { }
 module.exports = {
 	activate,
 	deactivate
-}
-
-
-async function sh(cmd) {
-	return new Promise(function (resolve, reject) {
-		exec(cmd, (err, stdout, stderr) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve({ stdout, stderr });
-			}
-		});
-	});
 }
