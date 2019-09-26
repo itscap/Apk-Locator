@@ -1,6 +1,7 @@
 'use strict';
 const vscode = require('vscode');
 const Utils = require('./src/utils');
+const ShManager = require('./src/sh_manager');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -13,11 +14,11 @@ function activate(context) {
 
 		const rootDir = Utils.getRoot();
 		let manifestsInProj = await Utils.findManifests([], rootDir, true)
-		if (manifestsInProj && manifestsInProj.length>0) {
+		if (manifestsInProj && manifestsInProj.length > 0) {
 
 			let outputDir = await Utils.getProjectOutputDirPath(manifestsInProj)
 			if (outputDir) {
-				
+
 				let apkDir = await Utils.getApkDirPath(outputDir)
 				if (apkDir) {
 					console.log("apkDir => ", JSON.stringify(apkDir))
@@ -26,13 +27,13 @@ function activate(context) {
 					//TODO: Filter folders if containing existing apk
 					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
 					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
-					
-					
+
+					await ShManager.sh("open file://" + selectedFlavourFolder)
 					/*
 					await Utils.sh('open file://'+apkDir)
 					vscode.window.showInformationMessage('Dir opened!');	
 					*/
-				}else{
+				} else {
 					//TODO: Open outputDir fallback?
 					vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
 				}

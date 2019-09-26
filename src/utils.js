@@ -2,7 +2,6 @@
 const vscode = require("vscode");
 const path = require("path");
 const fs = require("fs");
-const proc = require("child_process");
 
 function getRoot() {
 	/*
@@ -159,16 +158,13 @@ var pickAFlavourDialog = async (buildDirs) => {
 	return buildDirs[selectedIndex]
 }
 
-function sh(cmd) {
-	return new Promise(function (resolve, reject) {
-		proc.exec(cmd, (err, stdout, stderr) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve({ stdout, stderr });
-			}
-		});
-	});
-}
 
-module.exports = { getRoot, sh, findManifests, getProjectOutputDirPath, getApkDirPath, getSubDirPaths, pickAFlavourDialog };
+
+module.exports = {
+	getRoot,
+	findManifests,
+	getProjectOutputDirPath,
+	getApkDirPath,
+	getSubDirPaths,
+	pickAFlavourDialog
+};
