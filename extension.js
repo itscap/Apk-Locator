@@ -1,6 +1,7 @@
 'use strict';
 const vscode = require('vscode');
 const Utils = require('./src/utils');
+const FileManager = require('./src/android_file_manager');
 const ShManager = require('./src/sh_manager');
 
 /**
@@ -13,16 +14,16 @@ function activate(context) {
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
 
 		const rootDir = Utils.getRoot();
-		let manifestsInProj = await Utils.findManifests([], rootDir, true)
+		let manifestsInProj = await FileManager.findManifests([], rootDir, true)
 		if (manifestsInProj && manifestsInProj.length > 0) {
 
-			let outputDir = await Utils.getProjectOutputDirPath(manifestsInProj)
+			let outputDir = await FileManager.getProjectOutputDirPath(manifestsInProj)
 			if (outputDir) {
 
-				let apkDir = await Utils.getApkDirPath(outputDir)
+				let apkDir = await FileManager.getApkDirPath(outputDir)
 				if (apkDir) {
 					console.log("apkDir => ", JSON.stringify(apkDir))
-					let projFlavours = await Utils.getSubDirPaths(apkDir)
+					let projFlavours = await FileManager.getSubDirPaths(apkDir)
 					console.log("projFlavours => ", JSON.stringify(projFlavours))
 					//TODO: Filter folders if containing existing apk
 					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
