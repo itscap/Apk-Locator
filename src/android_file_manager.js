@@ -9,7 +9,7 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	const MANIFEST_FILE_NAME = "AndroidManifest.xml";
 	let fileList = fs.readdirSync(dirToSearch);
 	await fileList.forEach(async file => {
-		file = dirToSearch + "/" + file;//TODO: will this work on windows?
+		file = dirToSearch + path.sep + file;
 		let stat = fs.statSync(file);
 		if (!_isFileInADirToExclude(file)) {
 			if (stat && stat.isDirectory()) {
@@ -90,10 +90,10 @@ function _isFileInADirToExclude(file) {
 		".git",
 		".gradle",
 		".idea",
-		"/ios",
-		"/bin",
-		"/res",
-		"/assets"
+		path.sep+"ios",
+		path.sep+"bin",
+		path.sep+"res",
+		path.sep+"assets"
 	];
 
 	return DIR_TO_EXCLUDE.find(dir => {
