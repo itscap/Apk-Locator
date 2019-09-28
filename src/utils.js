@@ -3,21 +3,19 @@ const vscode = require("vscode");
 const path = require("path");
 const fs = require("fs");
 
-function getRoot() {
-	/*
-	* let folderName = vscode.workspace.name; // get the open folder name
-	*/
+/**
+ * Returns the root path of the currently open project
+ */
+function getProjectRootPath() {
 	const rootPath = vscode.workspace.rootPath;
-	console.log("rootPath: ", rootPath);
+	//console.log("rootPath: ", rootPath);
 	return rootPath;
 }
 
 var pickAFlavourDialog = async (buildDirs) => {
-
 	let selectedIndex = 0
-	const PATH_SPLIT_CHAR = "/"//TODO if windows get "\"
 	let projFlavours = buildDirs.map(dir => {
-		let lastPathSegment = dir.split(PATH_SPLIT_CHAR).slice(-1)[0]
+		let lastPathSegment = dir.split(path.sep).slice(-1)[0]
 		return lastPathSegment
 	})
 	if (projFlavours) {
@@ -31,6 +29,6 @@ var pickAFlavourDialog = async (buildDirs) => {
 }
 
 module.exports = {
-	getRoot,
+	getProjectRootPath,
 	pickAFlavourDialog
 };

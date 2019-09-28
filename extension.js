@@ -13,7 +13,7 @@ function activate(context) {
 
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
 
-		const rootDir = Utils.getRoot();
+		const rootDir = Utils.getProjectRootPath();
 		let manifestsInProj = await FileManager.findManifests([], rootDir, true)
 		if (manifestsInProj && manifestsInProj.length > 0) {
 
