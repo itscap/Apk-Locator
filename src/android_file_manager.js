@@ -2,6 +2,9 @@
 const path = require("path");
 const fs = require("fs");
 
+/**
+ * Recursively search for AndroidManifest file from the given path 
+ */
 var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	const MANIFEST_FILE_NAME = "AndroidManifest.xml";
 	let fileList = fs.readdirSync(dirToSearch);
@@ -10,17 +13,16 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 		let stat = fs.statSync(file);
 		if (!_isFileInADirToExclude(file)) {
 			if (stat && stat.isDirectory()) {
-				/* Recurse into a subdirectory */
+				//Is directory: recurse into a subdirectory
 				manifestsArr = manifestsArr.concat(
 					await findManifests(manifestsArr, file, validateFile)
 				);
 			} else {
-				/* Is file */
+				//Is file 
 				if (path.basename(file) === MANIFEST_FILE_NAME) {
 					//console.log("Manifest file found! ==> ", file);
-					if (validateFile && _isValidManifestFile(file)) {//TODO: Fix if !validate file
-						manifestsArr.push(file);
-					} else {
+					let shouldBePushedIntoArr = !validateFile || _isValidManifestFile(file)
+					if (shouldBePushedIntoArr) {
 						manifestsArr.push(file);
 					}
 				}
@@ -29,55 +31,6 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 	});
 	return manifestsArr;
 };
-
-//Dir to skip for sure
-function _isFileInADirToExclude(file) {
-	const DIR_TO_EXCLUDE = [
-		"node_modules",
-		".git",
-		".gradle",
-		".idea",
-		"/ios",
-		"/bin",
-		"/res",
-		"/assets"
-	];
-
-	return DIR_TO_EXCLUDE.find(dir => {
-		return file.includes(dir);
-	});
-}
-
-//Return wether or not the passed file is valid
-function _isValidManifestFile(manifestFile) {
-	return true; //TODO: Check if ext is .xml and contains "application" tag
-}
-
-function getSubDirs(dir) {
-	let dirs = [];
-	getDirFiles(dir).forEach(file => {
-		console.log("getSubDirs file => ", file);
-
-		if (fs.lstatSync(file).isDirectory()) {
-			dirs.push(file);
-		}
-	});
-
-	return dirs;
-}
-
-function getDirFiles(dir) {
-	let files = [];
-	const parentDir = dir;
-	fs.readdirSync(dir).forEach(file => {
-		const pathToFile = path.join("/", parentDir, file);
-		console.log("getDirFiles file => ", pathToFile);
-		if (fs.existsSync(file)) {
-			files.push(file);
-		}
-	});
-	return files;
-}
 
 /** 
  * Every android project has the following structure: [ .../app/build⁩/outputs⁩/apk ]
@@ -117,8 +70,10 @@ var getApkDirPath = async (outputDirPath) => {
 	return apkDir
 }
 
+/**
+ * Returns an array with the subdirs contained in the given path
+ */
 var getSubDirPaths = async (dirPath) => {
-
 	let subDirPaths = []
 	if (dirPath) {
 		await fs.readdirSync(dirPath).forEach(subDir => {
@@ -128,6 +83,41 @@ var getSubDirPaths = async (dirPath) => {
 	return subDirPaths
 }
 
+//Dirs to skip for sure when searching for AndroidManifest file
+function _isFileInADirToExclude(file) {
+	const DIR_TO_EXCLUDE = [
+		"node_modules",
+		".git",
+		".gradle",
+		".idea",
+		"/ios",
+		"/bin",
+		"/res",
+		"/assets"
+	];
+
+	return DIR_TO_EXCLUDE.find(dir => {
+		return file.includes(dir);
+	});
+}
+
+/* 
+* Return wether or not the passed file is valid
+*/
+function _isValidManifestFile(manifestFile) {
+	const MANIFEST_EXTENSION = "xml"
+	const VALIDATION_TAG = "<application"
+	let isValid = false
+	//Checks if ext is .xml and file contains "application" tag
+	let ext = manifestFile.split('.').pop();
+	if(ext === MANIFEST_EXTENSION){
+		let fileContents = fs.readFileSync(manifestFile).toString()
+		if(fileContents.includes(VALIDATION_TAG)){
+			isValid = true
+		}
+	}
+	return isValid
+}
 
 module.exports = {
     findManifests,
