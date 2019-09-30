@@ -25,15 +25,12 @@ function activate(context) {
 					console.log("apkDir => ", JSON.stringify(apkDir))
 					let projFlavours = await FileManager.getSubDirPaths(apkDir)
 					console.log("projFlavours => ", JSON.stringify(projFlavours))
-					//TODO: Filter folders if containing existing apk
+					//TODO: Filter folders not containing an existing apk
 					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
 					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
 
 					await ShManager.sh("open file://" + selectedFlavourFolder)
-					/*
-					await Utils.sh('open file://'+apkDir)
-					vscode.window.showInformationMessage('Dir opened!');	
-					*/
+					vscode.window.showInformationMessage('Dir opened!');
 				} else {
 					//TODO: Open outputDir fallback?
 					vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
