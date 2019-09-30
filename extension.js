@@ -29,7 +29,7 @@ function activate(context) {
 					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
 					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
 
-					await ShManager.sh("open file://" + selectedFlavourFolder)
+					await ShManager.openFolder(selectedFlavourFolder)
 					vscode.window.showInformationMessage('Dir opened!');
 				} else {
 					//TODO: Open outputDir fallback?
