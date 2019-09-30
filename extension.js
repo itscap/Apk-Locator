@@ -9,40 +9,8 @@ const ShManager = require('./src/sh_manager');
  */
 function activate(context) {
 
-	console.log('Congratulations, your extension "apk-locator" is now active!');
-
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
-
-		const rootDir = Utils.getProjectRootPath();
-		let manifestsInProj = await FileManager.findManifests([], rootDir, true)
-		if (manifestsInProj && manifestsInProj.length > 0) {
-
-			let outputDir = await FileManager.getProjectOutputDirPath(manifestsInProj)
-			if (outputDir) {
-
-				let apkDir = await FileManager.getApkDirPath(outputDir)
-				if (apkDir) {
-					let projFlavours = await FileManager.getSubDirPaths(apkDir,true)
-					let selectedFlavourFolder = await Utils.showPickFlavourDialog(projFlavours)
-					
-					let buildTypes = await FileManager.getSubDirPaths(selectedFlavourFolder,true)
-					let selectedBuildTypeFolder = await Utils.showPickBuildTypeDialog(buildTypes)
-
-					await ShManager.openFolder(selectedBuildTypeFolder)
-					vscode.window.showInformationMessage('Dir opened!');
-				} else {
-					//TODO: Open outputDir fallback?
-					vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
-				}
-
-			} else {
-				vscode.window.showErrorMessage('Cannot find prj output dir, KO');//TODO
-			}
-
-		} else {
-			vscode.window.showErrorMessage('Cannot find manifests project, are you sure this is an android proj?');
-		}
-
+		_findManifestsInProject()	 
 	});
 
 	context.subscriptions.push(disposable);
@@ -51,6 +19,56 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() { }
+
+async function _findManifestsInProject(){
+	const rootDir = Utils.getProjectRootPath();
+	let manifestsInProj = await FileManager.findManifests([], rootDir, true)
+	if (manifestsInProj && manifestsInProj.length > 0) {
+		_getProjectOutputDirPath(manifestsInProj)
+	} else {
+		_showError('Cannot find manifests project, are you sure this is an android proj?');
+	}
+}
+
+async function _getProjectOutputDirPath(manifestsInProj){
+	let outputDir = await FileManager.getProjectOutputDirPath(manifestsInProj)
+	if (outputDir) {
+		_getApkDirPath(outputDir)
+	}else {
+		_showError('Cannot find prj output dir, KO');
+	}
+}
+
+async function _getApkDirPath(outputDir){
+	let apkDir = await FileManager.getApkDirPath(outputDir)
+				if (apkDir) {
+					_showPickFlavourDialog(apkDir)
+				}else {
+					//TODO: Open outputDir fallback?
+					vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
+				}
+}
+
+async function _showPickFlavourDialog(apkFolder){
+	let projFlavours = await FileManager.getSubDirPaths(apkFolder,true)
+	let selectedFlavourFolder = await Utils.showPickFlavourDialog(projFlavours)
+	_showPickBuildTypeDialog(selectedFlavourFolder)
+}
+
+async function _showPickBuildTypeDialog(flavourFolder){
+	let buildTypes = await FileManager.getSubDirPaths(flavourFolder,true)
+	let selectedBuildTypeFolder = await Utils.showPickBuildTypeDialog(buildTypes)
+	_onApkBuildFolderRetrieved(selectedBuildTypeFolder)
+}
+
+async function _onApkBuildFolderRetrieved(buildFolder){
+	await ShManager.openFolder(buildFolder)
+	vscode.window.showInformationMessage('Apk build folder opened!');
+}
+
+function _showError(message){
+	vscode.window.showErrorMessage(message)
+}
 
 module.exports = {
 	activate,
