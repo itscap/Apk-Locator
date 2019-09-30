@@ -22,14 +22,13 @@ function activate(context) {
 
 				let apkDir = await FileManager.getApkDirPath(outputDir)
 				if (apkDir) {
-					console.log("apkDir => ", JSON.stringify(apkDir))
-					let projFlavours = await FileManager.getSubDirPaths(apkDir)
-					console.log("projFlavours => ", JSON.stringify(projFlavours))
-					//TODO: Filter folders not containing an existing apk
-					let selectedFlavourFolder = await Utils.pickAFlavourDialog(projFlavours)
-					console.log("selectedFlavourFolder => ", JSON.stringify(selectedFlavourFolder))
+					let projFlavours = await FileManager.getSubDirPaths(apkDir,true)
+					let selectedFlavourFolder = await Utils.showPickFlavourDialog(projFlavours)
+					
+					let buildTypes = await FileManager.getSubDirPaths(selectedFlavourFolder,true)
+					let selectedBuildTypeFolder = await Utils.showPickBuildTypeDialog(buildTypes)
 
-					await ShManager.openFolder(selectedFlavourFolder)
+					await ShManager.openFolder(selectedBuildTypeFolder)
 					vscode.window.showInformationMessage('Dir opened!');
 				} else {
 					//TODO: Open outputDir fallback?
@@ -37,7 +36,7 @@ function activate(context) {
 				}
 
 			} else {
-				vscode.window.showErrorMessage('Cannot find prj output dir, KO');
+				vscode.window.showErrorMessage('Cannot find prj output dir, KO');//TODO
 			}
 
 		} else {

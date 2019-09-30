@@ -71,14 +71,21 @@ var getApkDirPath = async (outputDirPath) => {
 }
 
 /**
- * Returns an array with the subdirs contained in the given path
+ * Returns an array with the subdirs and files contained in the given path
+ * Use @filterFiles flag to return just subdirs
  */
-var getSubDirPaths = async (dirPath) => {
+var getSubDirPaths = async (dirPath, filterFiles) => {
 	let subDirPaths = []
 	if (dirPath) {
-		await fs.readdirSync(dirPath).forEach(subDir => {
-			subDirPaths.push(path.join(dirPath, subDir))
-		})
+		await fs
+			.readdirSync(dirPath)
+			.forEach(subDir => {
+				let file = path.join(dirPath, subDir)
+				let stat = fs.statSync(file)
+				if (!filterFiles || (stat && stat.isDirectory())) {
+					subDirPaths.push(file)
+				}
+			})
 	}
 	return subDirPaths
 }
@@ -90,10 +97,10 @@ function _isFileInADirToExclude(file) {
 		".git",
 		".gradle",
 		".idea",
-		path.sep+"ios",
-		path.sep+"bin",
-		path.sep+"res",
-		path.sep+"assets"
+		path.sep + "ios",
+		path.sep + "bin",
+		path.sep + "res",
+		path.sep + "assets"
 	];
 
 	return DIR_TO_EXCLUDE.find(dir => {
@@ -110,9 +117,9 @@ function _isValidManifestFile(manifestFile) {
 	let isValid = false
 	//Checks if ext is .xml and file contains "application" tag
 	let ext = manifestFile.split('.').pop();
-	if(ext === MANIFEST_EXTENSION){
+	if (ext === MANIFEST_EXTENSION) {
 		let fileContents = fs.readFileSync(manifestFile).toString()
-		if(fileContents.includes(VALIDATION_TAG)){
+		if (fileContents.includes(VALIDATION_TAG)) {
 			isValid = true
 		}
 	}
@@ -120,7 +127,7 @@ function _isValidManifestFile(manifestFile) {
 }
 
 module.exports = {
-    findManifests,
+	findManifests,
 	getProjectOutputDirPath,
 	getApkDirPath,
 	getSubDirPaths,

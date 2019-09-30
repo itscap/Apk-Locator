@@ -12,27 +12,34 @@ function getProjectRootPath() {
 	return rootPath;
 }
 
-var pickAFlavourDialog = async (buildDirs) => {
-	let selectedIndex = 0
-	buildDirs = buildDirs.filter(dir => {
-		return !dir
-			.split(path.sep)
-			.pop()//lastPathSegment
-			.startsWith('.')
-	})
-	let projFlavours = buildDirs.map(dir => dir.split(path.sep).pop())
+//Eg. develop,staging,production
+var showPickFlavourDialog = async (projFlavourSubDirs) => {	
+	let projFlavours = projFlavourSubDirs.map(dir => dir.split(path.sep).pop())//lastPathSegments
+	let selectedIndex = await showPickerDialog("Pick a project flavour:", projFlavours)
+	return projFlavourSubDirs[selectedIndex]
+}
 
-	if (projFlavours) {
-		const selection = await vscode.window.showQuickPick(projFlavours, {
-			label: "Pick a flavour:",
+//Eg. debug, release
+var showPickBuildTypeDialog = async (buildTypeSubDirs) => {
+	let buildTypes = buildTypeSubDirs.map(dir => dir.split(path.sep).pop())
+	let selectedIndex = await showPickerDialog("Pick a build type:", buildTypes)
+	return buildTypeSubDirs[selectedIndex]
+}
+
+var showPickerDialog = async (title,elements) => {
+	let selectedIndex = 0
+	if (elements) {
+		const selection = await vscode.window.showQuickPick(elements, {
+			label: title,
 			canPickMany: false
 		});
-		selectedIndex = projFlavours.findIndex(f => f == selection)
+		selectedIndex = elements.findIndex(f => f == selection)
 	}
-	return buildDirs[selectedIndex]
+	return selectedIndex
 }
 
 module.exports = {
 	getProjectRootPath,
-	pickAFlavourDialog
+	showPickFlavourDialog,
+	showPickBuildTypeDialog
 };
