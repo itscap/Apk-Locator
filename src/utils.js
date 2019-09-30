@@ -14,10 +14,14 @@ function getProjectRootPath() {
 
 var pickAFlavourDialog = async (buildDirs) => {
 	let selectedIndex = 0
-	let projFlavours = buildDirs
-		.map(dir => dir.split(path.sep).pop())//lastPathSegment
-		.filter(dir => !dir.startsWith('.'))
-		
+	buildDirs = buildDirs.filter(dir => {
+		return !dir
+			.split(path.sep)
+			.pop()//lastPathSegment
+			.startsWith('.')
+	})
+	let projFlavours = buildDirs.map(dir => dir.split(path.sep).pop())
+
 	if (projFlavours) {
 		const selection = await vscode.window.showQuickPick(projFlavours, {
 			label: "Pick a flavour:",
