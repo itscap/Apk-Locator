@@ -10,7 +10,8 @@ const ShManager = require('./src/sh_manager');
 function activate(context) {
 
 	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
-		_findManifestsInProject()	 
+		const rootDir = Utils.getProjectRootPath();
+		_findAndroidManifests(rootDir)	 
 	});
 
 	context.subscriptions.push(disposable);
@@ -20,9 +21,9 @@ exports.activate = activate;
 // this method is called when your extension is deactivated
 function deactivate() { }
 
-async function _findManifestsInProject(){
-	const rootDir = Utils.getProjectRootPath();
-	let manifestsInProj = await FileManager.findManifests([], rootDir, true)
+async function _findAndroidManifests(projRootDir){
+	
+	let manifestsInProj = await FileManager.findManifests([], projRootDir, true)
 	if (manifestsInProj && manifestsInProj.length > 0) {
 		_getProjectOutputDirPath(manifestsInProj)
 	} else {
@@ -63,7 +64,11 @@ async function _showPickBuildTypeDialog(flavourFolder){
 
 async function _onApkBuildFolderRetrieved(buildFolder){
 	await ShManager.openFolder(buildFolder)
-	vscode.window.showInformationMessage('Apk build folder opened!');
+	_showMessage('Apk build folder opened!')
+}
+
+function _showMessage(message){
+	vscode.window.showInformationMessage(message);
 }
 
 function _showError(message){
