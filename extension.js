@@ -28,8 +28,8 @@ async function _findAndroidManifests(projRootDir) {
 		_getProjectOutputDirPath(manifestsInProj)
 	} else {
 		_showError(
-			'Cannot find any AndroidManifest file in project ☹️.'
-			+ '\nTIP: Are you sure this is an Android project? 👀'
+			'Cannot find any AndroidManifest file in project 😮🤷‍.'
+			+ '\nAre you sure this is an Android project? 👀'
 		);
 	}
 }
@@ -39,7 +39,7 @@ async function _getProjectOutputDirPath(manifestsInProj) {
 	if (outputDir) {
 		_getApkDirPath(outputDir)
 	} else {
-		_showError('Cannot find project output directory 😵☹️');
+		_showError('Cannot find project output directory 😮🤷‍.');
 	}
 }
 
@@ -50,8 +50,8 @@ async function _getApkDirPath(outputDir) {
 	} else {
 		//TODO: Open outputDir fallback?
 		vscode.window.showErrorMessage(
-			  'Cannot find Apk directory 😮'
-			+ '\n\nTIP: This directory is generated only after you make a build 😉'
+			  'Cannot find Apk directory 🤷‍.'
+			+ '\nThis directory is generated only after you make a build 👀'
 			);
 	}
 }
@@ -71,15 +71,10 @@ async function _showPickBuildTypeDialog(flavourFolder) {
 async function _onApkBuildFolderRetrieved(buildFolder) {
 	
 	let success = await ShManager.openFolder(buildFolder)
-
 	if(success){
-	//TODO: GET flavour and buildType
-	let flavour = ""
-	let buildType = ""
 	_showMessage(
-		'Done! 😄🚀'
-		+`\n\nYour build folder 🎁 of ${flavour} - ${buildType} `
-		+'has been opened! 🎉'
+		'Done! 😄🚀'		
+		+'\nYour build folder has been opened! 🎁🎉'
 		)
 	}else{
 		_showError('Cannot open build folder 😵☹️')
