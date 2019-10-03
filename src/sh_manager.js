@@ -2,13 +2,18 @@
 const proc = require("child_process");
 const path = require("path");
 
-async function openFolder(filePath){
+async function openFolder(filePath) {
     let cmd = "open file:"
         + path.sep
         + path.sep
         + filePath
 
-    await _sh(cmd)
+    try {
+        await _sh(cmd)
+        return true
+    } catch (e) {
+        return false
+    }
 }
 
 function _sh(cmd) {

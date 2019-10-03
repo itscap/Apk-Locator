@@ -29,7 +29,7 @@ async function _findAndroidManifests(projRootDir) {
 	} else {
 		_showError(
 			'Cannot find any AndroidManifest file in project ☹️'
-			+ '\nAre you sure this is an Android project? 👀'
+			+ '\nTIP: Are you sure this is an Android project? 👀'
 		);
 	}
 }
@@ -49,7 +49,10 @@ async function _getApkDirPath(outputDir) {
 		_showPickFlavourDialog(apkDir)
 	} else {
 		//TODO: Open outputDir fallback?
-		vscode.window.showErrorMessage('Cannot find APK dir, you must make a build first!');
+		vscode.window.showErrorMessage(
+			  'Cannot find Apk directory 😮'
+			+ '\nTIP: This directory is generated only after you make a build 😉'
+			);
 	}
 }
 
@@ -66,8 +69,21 @@ async function _showPickBuildTypeDialog(flavourFolder) {
 }
 
 async function _onApkBuildFolderRetrieved(buildFolder) {
-	await ShManager.openFolder(buildFolder)
-	_showMessage('Apk build folder opened!')//TODO GIVE COMPLETE MESSAGE...
+	
+	let success = await ShManager.openFolder(buildFolder)
+
+	if(success){
+	//TODO: GET flavour and buildType
+	let flavour = ""
+	let buildType = ""
+	_showMessage(
+		'Done! 😄🚀'
+		+`\n\nYour build folder 🎁 of ${flavour} - ${buildType} `
+		+'has been opened! 🎉'
+		)
+	}else{
+		_showError('Cannot open build folder 😵☹️')
+	}
 }
 
 function _showMessage(message) {
