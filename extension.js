@@ -23,7 +23,15 @@ function deactivate() { }
 
 async function _findAndroidManifests(projRootDir) {
 
-	let manifestsInProj = await FileManager.findManifests([], projRootDir, true)
+	let manifestsInProj = await vscode.window.withProgress(
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: 'Scanning project files... 🔍🤔'
+		},
+		async () => {
+			return await FileManager.findManifests([], projRootDir, true)
+		}
+	);
 	if (manifestsInProj && manifestsInProj.length > 0) {
 		_getProjectOutputDirPath(manifestsInProj)
 	} else {
@@ -50,9 +58,9 @@ async function _getApkDirPath(outputDir) {
 	} else {
 		//TODO: Open outputDir fallback?
 		vscode.window.showErrorMessage(
-			  'Cannot find Apk directory 🤷‍.'
+			'Cannot find Apk directory 🤷‍.'
 			+ '\nThis directory is generated only after you make a build 👀'
-			);
+		);
 	}
 }
 
@@ -69,14 +77,14 @@ async function _showPickBuildTypeDialog(flavourFolder) {
 }
 
 async function _onApkBuildFolderRetrieved(buildFolder) {
-	
+
 	let success = await ShManager.openFolder(buildFolder)
-	if(success){
-	_showMessage(
-		'Done! 😄🚀'		
-		+'\nYour build folder has been opened! 🎁🎉'
+	if (success) {
+		_showMessage(
+			'Done! 😄🚀'
+			+ '\nYour build folder has been opened! 🎁🎉'
 		)
-	}else{
+	} else {
 		_showError('Cannot open build folder 😵☹️')
 	}
 }
