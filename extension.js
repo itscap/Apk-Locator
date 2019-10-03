@@ -28,7 +28,7 @@ async function _findAndroidManifests(projRootDir) {
 		_getProjectOutputDirPath(manifestsInProj)
 	} else {
 		_showError(
-			'Cannot find any AndroidManifest file in project ☹️'
+			'Cannot find any AndroidManifest file in project ☹️.'
 			+ '\nTIP: Are you sure this is an Android project? 👀'
 		);
 	}
@@ -51,7 +51,7 @@ async function _getApkDirPath(outputDir) {
 		//TODO: Open outputDir fallback?
 		vscode.window.showErrorMessage(
 			  'Cannot find Apk directory 😮'
-			+ '\nTIP: This directory is generated only after you make a build 😉'
+			+ '\n\nTIP: This directory is generated only after you make a build 😉'
 			);
 	}
 }

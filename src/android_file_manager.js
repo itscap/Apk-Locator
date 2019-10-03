@@ -61,11 +61,15 @@ var getProjectOutputDirPath = async (manifestsFiles) => {
 var getApkDirPath = async (outputDirPath) => {
 	const APK_DIR = "apk"
 	let apkDir = null
-	if (outputDirPath) {
-		let apkDirExists = fs.readdirSync(outputDirPath).find(dir => dir == APK_DIR)
-		if (apkDirExists) {
-			apkDir = path.join(outputDirPath, APK_DIR)
+	try {
+		if (outputDirPath) {
+			let apkDirExists = fs.readdirSync(outputDirPath).find(dir => dir == APK_DIR)
+			if (apkDirExists) {
+				apkDir = path.join(outputDirPath, APK_DIR)
+			}
 		}
+	} catch (e) {
+		console.log("Cannot find Apk directory: ",e)
 	}
 	return apkDir
 }
