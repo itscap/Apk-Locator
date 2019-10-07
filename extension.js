@@ -46,7 +46,7 @@ async function _getProjectOutputDirPath(manifestsInProj) {
 async function _getApkDirPath(outputDir) {
 	let apkDir = await FileManager.getApkDirPath(outputDir)
 	if (apkDir) {
-		_showPickFlavourDialog(apkDir)
+		_retrieveBuildDir(apkDir)
 	} else {
 		//TODO: Open outputDir fallback?
 		vscode.window.showErrorMessage(
@@ -56,20 +56,33 @@ async function _getApkDirPath(outputDir) {
 	}
 }
 
-async function _showPickFlavourDialog(apkFolder) {
-	let projFlavours = await FileManager.getSubDirPaths(apkFolder, true)
-	let selectedFlavourFolder = await Utils.showPickFlavourDialog(projFlavours)
-	_showPickBuildTypeDialog(selectedFlavourFolder)
+/**
+ * Android projects could have flavours (eg. develop,staging,production).
+ * If so each flavour contains its buildTypes (eg. debug, release),
+ * otherwise buildTypes are placed directly inside
+ * apk folder.
+ */
+async function _retrieveBuildDir(currentDir) {
+	let subDirs = await FileManager.getSubDirPaths(currentDir, true)
+	if(subDirs && subDirs.length>0) {
+		//TODO: put lastPathSegments into showPickerDialog fun
+		let lastPathSegments = Utils.getLastPathSegments(subDirs)
+		let selectedIndex = await Utils.showPickerDialog("Pick one:",lastPathSegments)
+		let selectedFolder = subDirs[selectedIndex]
+		
+		let containsApk = await FileManager.dirContainsApk(selectedFolder)
+		if (!containsApk) {
+			_retrieveBuildDir(selectedFolder)
+		} else {
+			_onBuildDirRetrieved(selectedFolder)
+		}
+	}else{
+		_showError('Cannot find apk in the selected directory 😮🤷‍.')
+	}
 }
 
-async function _showPickBuildTypeDialog(flavourFolder) {
-	let buildTypes = await FileManager.getSubDirPaths(flavourFolder, true)
-	let selectedBuildTypeFolder = await Utils.showPickBuildTypeDialog(buildTypes)
-	_onApkBuildFolderRetrieved(selectedBuildTypeFolder)
-}
+async function _onBuildDirRetrieved(buildFolder) {
 
-async function _onApkBuildFolderRetrieved(buildFolder) {
-	
 	let success = await ShManager.openFolder(buildFolder)
 	if(success){
 	_showMessage(

@@ -7,23 +7,11 @@ const fs = require("fs");
  * Returns the root path of the currently open project
  */
 function getProjectRootPath() {
-	const rootPath = vscode.workspace.rootPath;
-	//console.log("rootPath: ", rootPath);
-	return rootPath;
+	return vscode.workspace.rootPath;
 }
 
-//Eg. develop,staging,production
-var showPickFlavourDialog = async (projFlavourSubDirs) => {	
-	let projFlavours = projFlavourSubDirs.map(dir => dir.split(path.sep).pop())//lastPathSegments
-	let selectedIndex = await showPickerDialog("Pick a project flavour:", projFlavours)
-	return projFlavourSubDirs[selectedIndex]
-}
-
-//Eg. debug, release
-var showPickBuildTypeDialog = async (buildTypeSubDirs) => {
-	let buildTypes = buildTypeSubDirs.map(dir => dir.split(path.sep).pop())
-	let selectedIndex = await showPickerDialog("Pick a build type:", buildTypes)
-	return buildTypeSubDirs[selectedIndex]
+var getLastPathSegments = (dirs) => {
+	return dirs.map(dir => dir.split(path.sep).pop())
 }
 
 var showPickerDialog = async (title,elements) => {
@@ -40,6 +28,6 @@ var showPickerDialog = async (title,elements) => {
 
 module.exports = {
 	getProjectRootPath,
-	showPickFlavourDialog,
-	showPickBuildTypeDialog
+	getLastPathSegments,
+	showPickerDialog
 };

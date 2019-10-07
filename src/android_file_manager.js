@@ -69,7 +69,7 @@ var getApkDirPath = async (outputDirPath) => {
 			}
 		}
 	} catch (e) {
-		console.log("Cannot find Apk directory: ",e)
+		console.log("Cannot find Apk directory: ", e)
 	}
 	return apkDir
 }
@@ -92,6 +92,22 @@ var getSubDirPaths = async (dirPath, filterFiles) => {
 			})
 	}
 	return subDirPaths
+}
+
+var dirContainsApk = async (dir) => {
+	const APK_EXTENSION = "apk"
+	let containsApk = false
+
+	let dirContents = await getSubDirPaths(dir, false)
+	if (dirContents && dirContents.length > 0) {
+
+		containsApk = dirContents.find(file => {
+			let ext = file.split('.').pop()
+			return (ext === APK_EXTENSION)
+		})
+	}
+
+	return containsApk
 }
 
 //Dirs to skip for sure when searching for AndroidManifest file
@@ -135,4 +151,5 @@ module.exports = {
 	getProjectOutputDirPath,
 	getApkDirPath,
 	getSubDirPaths,
+	dirContainsApk
 };
