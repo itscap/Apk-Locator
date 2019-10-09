@@ -9,7 +9,7 @@ const ShManager = require('./src/sh_manager');
  */
 function activate(context) {
 
-	let disposable = vscode.commands.registerCommand('extension.open_apk_release_folder', async function () {
+	let disposable = vscode.commands.registerCommand('extension.locate_apk', async function () {
 		const rootDir = Utils.getProjectRootPath();
 		_findAndroidManifests(rootDir)
 	});
