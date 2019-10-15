@@ -8,6 +8,10 @@ If you are tired of manually searching for the generated apk file every time you
 
 Inspired by "Locate" function of Android Studio, this should be particularly useful with React Native projects, but you can use it with native project too 
 
+## Usage
+
+![apk-locator features](images/apk-locator-sample.gif)
+
 ## Features
 
 * Detects if workspace root path contains an Android Project
