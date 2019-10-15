@@ -64,21 +64,30 @@ async function _getApkDirPath(outputDir) {
 	}
 }
 
+async function _retrieveBuildDir(apkDir) {
+	let containsApk = await FileManager.dirContainsApk(apkDir)
+	if (containsApk) {
+		_onBuildDirRetrieved(containsApk)
+	} else {
+		_letUserSelectBuildTypes(apkDir)
+	}
+}
+
 /**
  * Android projects could have flavours (eg. develop,staging,production).
  * If so each flavour contains its buildTypes (eg. debug, release),
  * otherwise buildTypes are placed directly inside
  * apk folder.
  */
-async function _retrieveBuildDir(currentDir) {
+async function _letUserSelectBuildTypes(currentDir) {
 	let subDirs = await FileManager.getSubDirPaths(currentDir, true)
 	if (!Utils.isEmptyArray(subDirs)) {
 		let selectedFolder = await Utils.showPickerDialog("Pick one:", subDirs)
 		let containsApk = await FileManager.dirContainsApk(selectedFolder)
-		if (!containsApk) {
-			_retrieveBuildDir(selectedFolder)
-		} else {
+		if (containsApk) {
 			_onBuildDirRetrieved(selectedFolder)
+		} else {
+			_letUserSelectBuildTypes(selectedFolder)
 		}
 	} else {
 		_showError('Cannot find apk in the selected directory 😮🤷‍.')
