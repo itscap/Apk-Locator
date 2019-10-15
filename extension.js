@@ -57,7 +57,6 @@ async function _getApkDirPath(outputDir) {
 	if (apkDir) {
 		_retrieveBuildDir(apkDir)
 	} else {
-		//TODO: Open outputDir fallback?
 		vscode.window.showErrorMessage(
 			'Cannot find Apk directory 🤷‍.'
 			+ '\nThis directory is generated only after you make a build 👀'
@@ -74,11 +73,7 @@ async function _getApkDirPath(outputDir) {
 async function _retrieveBuildDir(currentDir) {
 	let subDirs = await FileManager.getSubDirPaths(currentDir, true)
 	if (!Utils.isEmptyArray(subDirs)) {
-		//TODO: put lastPathSegments into showPickerDialog fun
-		let lastPathSegments = Utils.getLastPathSegments(subDirs)
-		let selectedIndex = await Utils.showPickerDialog("Pick one:", lastPathSegments)
-		let selectedFolder = subDirs[selectedIndex]
-
+		let selectedFolder = await Utils.showPickerDialog("Pick one:", subDirs)
 		let containsApk = await FileManager.dirContainsApk(selectedFolder)
 		if (!containsApk) {
 			_retrieveBuildDir(selectedFolder)

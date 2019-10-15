@@ -17,16 +17,19 @@ var isEmptyArray = (obj) => {
 	return Array.isArray(obj) && obj.length === 0
 }
 
-var showPickerDialog = async (title, elements) => {
+var showPickerDialog = async (title, subDirs) => {
 	let selectedIndex = 0
-	if (elements) {
-		const selection = await vscode.window.showQuickPick(elements, {
+	let selectedElement = null
+	if (!isEmptyArray(subDirs)) {
+		let lastPathSegments = getLastPathSegments(subDirs)
+		const selection = await vscode.window.showQuickPick(lastPathSegments, {
 			label: title,
 			canPickMany: false
 		});
-		selectedIndex = elements.findIndex(f => f == selection)
+		selectedIndex = lastPathSegments.findIndex(f => f == selection)
+		selectedElement = subDirs[selectedIndex]
 	}
-	return selectedIndex
+	return selectedElement
 }
 
 module.exports = {
