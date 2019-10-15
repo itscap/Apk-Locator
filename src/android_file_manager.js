@@ -1,6 +1,7 @@
 "use strict";
 const path = require("path");
 const fs = require("fs");
+const Utils = require('./utils');
 
 /**
  * Recursively search for AndroidManifest file from the given path 
@@ -97,10 +98,8 @@ var getSubDirPaths = async (dirPath, filterFiles) => {
 var dirContainsApk = async (dir) => {
 	const APK_EXTENSION = "apk"
 	let containsApk = false
-
 	let dirContents = await getSubDirPaths(dir, false)
-	if (dirContents && dirContents.length > 0) {
-
+	if (!Utils.isEmptyArray(dirContents)) {
 		containsApk = dirContents.find(file => {
 			let ext = file.split('.').pop()
 			return (ext === APK_EXTENSION)

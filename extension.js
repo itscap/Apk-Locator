@@ -32,7 +32,8 @@ async function _findAndroidManifests(projRootDir) {
 			return await FileManager.findManifests([], projRootDir, true)
 		}
 	);
-	if (manifestsInProj && manifestsInProj.length > 0) {
+
+	if (!Utils.isEmptyArray(manifestsInProj)) {
 		_getProjectOutputDirPath(manifestsInProj)
 	} else {
 		_showError(
@@ -72,19 +73,19 @@ async function _getApkDirPath(outputDir) {
  */
 async function _retrieveBuildDir(currentDir) {
 	let subDirs = await FileManager.getSubDirPaths(currentDir, true)
-	if(subDirs && subDirs.length>0) {
+	if (!Utils.isEmptyArray(subDirs)) {
 		//TODO: put lastPathSegments into showPickerDialog fun
 		let lastPathSegments = Utils.getLastPathSegments(subDirs)
-		let selectedIndex = await Utils.showPickerDialog("Pick one:",lastPathSegments)
+		let selectedIndex = await Utils.showPickerDialog("Pick one:", lastPathSegments)
 		let selectedFolder = subDirs[selectedIndex]
-		
+
 		let containsApk = await FileManager.dirContainsApk(selectedFolder)
 		if (!containsApk) {
 			_retrieveBuildDir(selectedFolder)
 		} else {
 			_onBuildDirRetrieved(selectedFolder)
 		}
-	}else{
+	} else {
 		_showError('Cannot find apk in the selected directory 😮🤷‍.')
 	}
 }
@@ -93,10 +94,7 @@ async function _onBuildDirRetrieved(buildFolder) {
 
 	let success = await ShManager.openFolder(buildFolder)
 	if (success) {
-		_showMessage(
-			'Done! 😄🚀'
-			+ '\nYour build folder has been opened! 🎁🎉'
-		)
+		_showMessage('Done! 🚀🎉\nYour build folder has been opened!')
 	} else {
 		_showError('Cannot open build folder 😵☹️')
 	}
