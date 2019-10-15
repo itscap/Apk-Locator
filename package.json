@@ -28,12 +28,12 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.4.4",
-		"@babel/core": "^7.4.4",
-		"@types/mocha": "^2.2.42",
-		"@types/node": "^10.12.21",
-		"eslint": "^5.13.0",
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28"
+		"@babel/cli": "^7.6.4",
+		"@babel/core": "^7.6.4",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.7.12",
+		"eslint": "^6.5.1",
+		"typescript": "^3.6.4",
+		"vscode": "^1.1.36"
 	}
 }
