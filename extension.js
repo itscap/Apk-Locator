@@ -48,7 +48,7 @@ async function _getProjectOutputDirPath(manifestsInProj) {
 	if (outputDir) {
 		_getApkDirPath(outputDir)
 	} else {
-		_showError('Cannot find project output directory 😮🤷‍.');
+		_showError('Cannot find project output directory 😮🤷‍');
 	}
 }
 
@@ -64,34 +64,40 @@ async function _getApkDirPath(outputDir) {
 	}
 }
 
-async function _retrieveBuildDir(apkDir) {
-	let containsApk = await FileManager.dirContainsApk(apkDir)
-	if (containsApk) {
-		_onBuildDirRetrieved(containsApk)
-	} else {
-		_letUserSelectBuildTypes(apkDir)
-	}
-}
-
 /**
  * Android projects could have flavours (eg. develop,staging,production).
  * If so each flavour contains its buildTypes (eg. debug, release),
  * otherwise buildTypes are placed directly inside
  * apk folder.
+ * 
+ * @param {*} currentDir 
  */
-async function _letUserSelectBuildTypes(currentDir) {
+async function _retrieveBuildDir(currentDir) {
 	let subDirs = await FileManager.getSubDirPaths(currentDir, true)
 	if (!Utils.isEmptyArray(subDirs)) {
-		let selectedFolder = await Utils.showPickerDialog("Pick one:", subDirs)
+		let selectedFolder = await _selectBuildTypeDir(subDirs)
 		let containsApk = await FileManager.dirContainsApk(selectedFolder)
 		if (containsApk) {
 			_onBuildDirRetrieved(selectedFolder)
 		} else {
-			_letUserSelectBuildTypes(selectedFolder)
+			_retrieveBuildDir(selectedFolder)
 		}
 	} else {
-		_showError('Cannot find apk in the selected directory 😮🤷‍.')
+		_showError('Cannot find apk in the selected directory 😮🤷‍')
 	}
+}
+
+/**
+ * Show picker dialog only if there's more than one @param {Array} subDirs 
+ */
+async function _selectBuildTypeDir(subDirs) {
+	let selectedFolder = null
+	if (subDirs.length === 1) {
+		selectedFolder = subDirs[0]
+	} else {
+		selectedFolder = await Utils.showPickerDialog("Pick one:", subDirs)
+	}
+	return selectedFolder
 }
 
 async function _onBuildDirRetrieved(buildFolder) {

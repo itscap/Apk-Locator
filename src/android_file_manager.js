@@ -21,7 +21,6 @@ var findManifests = async (manifestsArr, dirToSearch, validateFile) => {
 			} else {
 				//Is file 
 				if (path.basename(file) === MANIFEST_FILE_NAME) {
-					//console.log("Manifest file found! ==> ", file);
 					let shouldBePushedIntoArr = !validateFile || _isValidManifestFile(file)
 					if (shouldBePushedIntoArr) {
 						manifestsArr.push(file);
