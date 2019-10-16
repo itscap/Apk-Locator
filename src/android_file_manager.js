@@ -3,6 +3,17 @@ const path = require("path");
 const fs = require("fs");
 const Utils = require('./utils');
 
+const DIR_TO_EXCLUDE = [
+	"node_modules",
+	".git",
+	".gradle",
+	".idea",
+	path.sep + "ios",
+	path.sep + "bin",
+	path.sep + "res",
+	path.sep + "assets"
+];
+
 /**
  * Recursively search for AndroidManifest file from the given path 
  */
@@ -110,16 +121,6 @@ var dirContainsApk = async (dir) => {
 
 //Dirs to skip for sure when searching for AndroidManifest file
 function _isFileInADirToExclude(file) {
-	const DIR_TO_EXCLUDE = [
-		"node_modules",
-		".git",
-		".gradle",
-		".idea",
-		path.sep + "ios",
-		path.sep + "bin",
-		path.sep + "res",
-		path.sep + "assets"
-	];
 
 	return DIR_TO_EXCLUDE.find(dir => {
 		return file.includes(dir);
