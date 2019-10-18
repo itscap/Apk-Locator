@@ -4,18 +4,29 @@ A VS Code extension that effortlessly find and open the enclosing folder of your
 
 ## Why do i need this?
 
-If you are tired of manually searching for the generated apk file every time you launch a build in VS Code you might want to give this a try, I hope this can make your life easier too 🙂
+If you are tired of manually searching for the generated apk file every time you launch a build in VS Code you might want to give this a try 🙂
 
-Inspired by "Locate" function of Android Studio, this should be particularly useful with React Native projects, but you can use it with native project too 
+Inspired by `Locate` function of Android Studio, this should be particularly useful with React Native projects, but you can use it with native project too.
 
 ## Usage
 
-![apk-locator features](images/apk-locator-sample.gif)
+Just open Command Palette and type `Locate APK` command:
+
+```
+CMD + Shift + P -> Locate APK
+```
+
+![apk-locator direct](images/apk_locator_sample_direct.gif)
+
+It will open apk's folder directly if project doesn't contain multiple `flavor` or `buildTypes`
+
+![apk-locator select](images/apk_locator_sample_select.gif)
+
+Or will let you choose [build variant](https://developer.android.com/studio/build/build-variants) otherwise
 
 ## Features
 
 * Detects if workspace root path contains an Android Project
 * Detects if a build has already been done 
-* If has more than one lets you choose which flavour you want to open
-* Lets you choose which build type you want to open
-* Opens the enclosing folder containing your (choosen) apk file 🎁
+* Choose which build variant you want to open
+* Opens the enclosing folder containing your apk file 🎁

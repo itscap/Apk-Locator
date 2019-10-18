@@ -2,7 +2,7 @@
 	"name": "apk-locator",
 	"displayName": "Apk Locator",
 	"description": "Easily find and open the folder containing your apk file.",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "itscap",
 	"engines": {
 		"vscode": "^1.34.0"

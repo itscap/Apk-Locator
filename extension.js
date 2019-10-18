@@ -65,8 +65,8 @@ async function _getApkDirPath(outputDir) {
 }
 
 /**
- * Android projects could have flavours (eg. develop,staging,production).
- * If so each flavour contains its buildTypes (eg. debug, release),
+ * Android projects could have flavors (eg. develop,staging,production).
+ * If so each flavor contains its buildTypes (eg. debug, release),
  * otherwise buildTypes are placed directly inside
  * apk folder.
  * 
