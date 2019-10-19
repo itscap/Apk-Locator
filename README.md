@@ -2,7 +2,7 @@
 
 A VS Code extension that effortlessly find and open the enclosing folder of your generated apk files. 
 
-## Why do i need this?
+## Why do I need this?
 
 If you are tired of manually searching for the generated apk file every time you launch a build in VS Code you might want to give this a try 🙂
 
@@ -27,6 +27,6 @@ Or will let you choose [build variant](https://developer.android.com/studio/buil
 ## Features
 
 * Detects if workspace root path contains an Android Project
-* Detects if a build has already been done 
+* Detects if a build has already been done
 * Choose which build variant you want to open
 * Opens the enclosing folder containing your apk file 🎁
