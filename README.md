@@ -1,4 +1,4 @@
-# apk-locator
+# Apk-Locator
 
 A VS Code extension that effortlessly find and open the enclosing folder of your generated apk files. 
 
