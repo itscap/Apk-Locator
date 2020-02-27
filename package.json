@@ -2,8 +2,9 @@
 	"name": "apk-locator",
 	"displayName": "Apk Locator",
 	"description": "A VS Code extension that effortlessly find and open the enclosing folder of your generated apk files",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "itscap",
+	"icon":"./images/icon.png",
 	"repository": "https://github.com/itscap/Apk-Locator.git",
 	"engines": {
 		"vscode": "^1.34.0"
